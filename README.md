@@ -188,6 +188,8 @@ A hexdump is a dump from a file or storage (e.g. RAM) in hexidecimal. It can be 
 
 This one was a doozy! There's a good writeup [here](https://kongwenbin.wordpress.com/2016/08/26/overthewire-bandit-level-12-to-level-13/)
 
+A key takeaway: `file myfile` will let you know what sort of compressed file it originally was (e.g. gzip, b2z, tar)
+
 ## Level 13
 
 The password for the next level is stored in /etc/bandit_pass/bandit14 and can only be read by user bandit14. For this level, you don’t get the next password, but you get a private SSH key that can be used to log into the next level. Note: localhost is a hostname that refers to the machine you are working on
