@@ -314,3 +314,32 @@ diff passwords.new passwords.old
 FLAG: kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
 
 Easy one 🙂
+
+## Level 18
+
+The password for the next level is stored in a file readme in the homedirectory. Unfortunately, someone has modified .bashrc to log you out when you log in with SSH.
+
+```
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "echo '' > .bashrc"
+bash: .bashrc: Operation not permitted
+
+ssh bandit18@bandit.labs.overthewire.org -p 2220 "rm .bashrc"
+rm: cannot remove '.bashrc': Permission denied
+
+ssh bandit18@bandit.labs.overthewire.org -p 2220 -t "cat readme"
+```
+
+My original approach was to try and overwrite the .bashrc, but I didn't have permission to do that. I also wondered if you could supply your own bashrc but I didn't try doing that.
+
+I had to look this up. The `-t` flag on `ssh`  forces a 'pseudo-terminal' allocation. This  is like if you logged in and the fired up `screen`, I think. So, kinda sneaky. I used this to then cat out the readme, and gain the flag.
+
+FLAG: IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
+
+## Level 19
+
+To gain access to the next level, you should use the setuid binary in the homedirectory. Execute it without arguments to find out how to use it. The password for this level can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary.
+
+```
+ssh bandit19@bandit.labs.overthewire.org -p 2220
+```
+
