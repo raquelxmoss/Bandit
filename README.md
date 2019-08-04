@@ -197,4 +197,12 @@ The password for the next level is stored in /etc/bandit_pass/bandit14 and can o
 ```bash
 ssh bandit13@bandit.labs.overthewire.org -p 2220
 password: 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
+cd ~
+cat bandit14.private [confirmed that yep, that's a private key that's lying around]
+ssh bandit14@localhost -i sshkey.private
+cat /etc/bandit_pass/bandit14
 ```
+
+FLAG: 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+
+The lesson here is that since I had bandit14's private key (why???) I could use that to log in as bandit14. I think I went too quickly to googling on this one, I should have just poked around a bit to find the ssh key lying around there.
