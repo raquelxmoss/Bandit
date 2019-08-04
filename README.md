@@ -235,4 +235,82 @@ I had to look this up, I had never heard of `nc` before. Before I start googling
 
 I was relying on my web world instincts. What I'm confused about is that you can just submit the password without saying exactly what it is (even, like, the body of a request. Odd). I can't quite figure out the echo and piping part. After reading the nc man page, I tried iterations on this without luck.
 
+```bash
 nc -c "echo 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e" localhost 30000
+```
+
+This works though
+```bash
+nc localhost 30000
+<type password, hit enter>
+```
+
+telnet also works
+```bash
+telnet localhost 30000
+<type password, hit enter>
+```
+
+## Level 15
+
+The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL encryption.
+
+Helpful note: Getting “HEARTBEATING” and “Read R BLOCK”? Use -ign_eof and read the “CONNECTED COMMANDS” section in the manpage. Next to ‘R’ and ‘Q’, the ‘B’ command also works in this version of that command…
+
+Commands you may need to solve this level
+ssh, telnet, nc, openssl, s_client, nmap
+
+```bash
+ssh bandit15@bandit.labs.overthewire.org -p 2220
+password: BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+openssl s_client -connect localhost:30001
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+```
+
+FLAG: cluFn7wTiGryunymYOu4RcffSxQluehd
+
+Figured this one out on my own, scanning the man page for s_client helped
+
+## Level 16
+
+The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL and which don’t. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it.
+
+ssh, telnet, nc, openssl, s_client, nmap
+
+```bash
+ssh bandit16@bandit.labs.overthewire.org -p 2220
+password: cluFn7wTiGryunymYOu4RcffSxQluehd
+
+nmap -p 31000-32000
+PORT      STATE SERVICE
+31046/tcp open  unknown
+31518/tcp open  unknown
+31691/tcp open  unknown
+31790/tcp open  unknown
+31960/tcp open  unknown
+
+openssl s_client -connect localhost:31790
+cluFn7wTiGryunymYOu4RcffSxQluehd
+```
+
+For this one, I couldn't figure out how to tell which of these ports spoke ssl, so I just iterated through the list. Other writeups showed using the `-A` (aggressive) flag brought up that information. I had tried that while I was working things out, but the scan took too long that I quit out of it.
+
+## Level 17
+
+There are 2 files in the homedirectory: passwords.old and passwords.new. The password for the next level is in passwords.new and is the only line that has been changed between passwords.old and passwords.new
+
+NOTE: if you have solved this level and see ‘Byebye!’ when trying to log into bandit18, this is related to the next level, bandit19
+
+cat, grep, ls, diff
+
+```
+diff passwords.new passwords.old
+< kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+---
+> hlbSBPAWJmL6WFDb06gpTx1pPButblOA
+```
+
+FLAG: kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+
+Easy one 🙂
