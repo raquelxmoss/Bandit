@@ -206,3 +206,33 @@ cat /etc/bandit_pass/bandit14
 FLAG: 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
 
 The lesson here is that since I had bandit14's private key (why???) I could use that to log in as bandit14. I think I went too quickly to googling on this one, I should have just poked around a bit to find the ssh key lying around there.
+
+## Level 14
+
+The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.
+
+ssh, telnet, nc, openssl, s_client, nmap
+
+```bash
+nmap localhost
+
+PORT      STATE SERVICE
+22/tcp    open  ssh
+113/tcp   open  ident
+30000/tcp open  ndmps
+
+curl -u bandit14:4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e localhost:30000
+Wrong! Please enter the correct current password
+
+echo 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e | nc localhost 30000
+```
+
+FLAG: BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+NDMPS is a protocol meant to transport data between network attached storage (NAS) devices and backup devices
+
+I had to look this up, I had never heard of `nc` before. Before I start googling I should man page each suggested tool because then I might be able to figure it out myself. nc (netcat) is apparenlty a TCP/IP swiss army knife.
+
+I was relying on my web world instincts. What I'm confused about is that you can just submit the password without saying exactly what it is (even, like, the body of a request. Odd). I can't quite figure out the echo and piping part. After reading the nc man page, I tried iterations on this without luck.
+
+nc -c "echo 4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e" localhost 30000
