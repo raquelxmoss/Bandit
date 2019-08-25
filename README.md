@@ -602,3 +602,22 @@ Good job getting a shell! Now hurry and grab the password for bandit27!
 FLAG: 3ba3118a22e93127a4ed485be72ef5ea
 
 Note to self: try running a file if it's highlighted in red 🤦‍♀️
+
+## Level 27
+
+There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo. The password for the user bandit27-git is the same as for the user bandit27.
+
+Clone the repository and find the password for the next level.
+
+FLAG: 0ef186ac70e04ea33b4c1853d2526fa2
+
+¯\_(ツ)_/¯ I know how to clone a repo
+
+## Level 28
+
+There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo. The password for the user bandit28-git is the same as for the user bandit28.
+
+Clone the repository and find the password for the next level.
+
+The password was redacted but still visible in the git history, easily found with a `git show`
+FLAG: bbc96594b4e001778eee9975372716b2
