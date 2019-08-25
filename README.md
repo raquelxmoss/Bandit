@@ -620,6 +620,7 @@ There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo
 Clone the repository and find the password for the next level.
 
 The password was redacted but still visible in the git history, easily found with a `git show`
+
 FLAG: bbc96594b4e001778eee9975372716b2
 
 ## Level 29
@@ -627,3 +628,30 @@ FLAG: bbc96594b4e001778eee9975372716b2
 There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo. The password for the user bandit29-git is the same as for the user bandit29.
 
 Clone the repository and find the password for the next level.
+
+`git branch -r`
+
+FLAG: 5b90576bedb2cc04c86a9e924ce42faf
+
+## Level 30
+
+`git show secret` [secret being the name of a tag!]
+
+FLAG: 47e603bb428404d265f59c42920d81e5
+
+Takeaway: don't forget about tags
+
+## Level 31
+
+I had to edit the .gitignore and push a file to the remote
+
+FLAG: 56a9bf19c63d650ce78e6ec0354ee45e
+
+## Level 32
+
+After all this git stuff its time for another escape. Good luck!
+
+FLAG: c9c3199ddf4121b10cf581a98d51caee
+
+## [FIN]
+
