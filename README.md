@@ -611,7 +611,7 @@ Clone the repository and find the password for the next level.
 
 FLAG: 0ef186ac70e04ea33b4c1853d2526fa2
 
-¯\_(ツ)_/¯ I know how to clone a repo
+¯\\_(ツ)_/¯ I know how to clone a repo
 
 ## Level 28
 
@@ -621,3 +621,9 @@ Clone the repository and find the password for the next level.
 
 The password was redacted but still visible in the git history, easily found with a `git show`
 FLAG: bbc96594b4e001778eee9975372716b2
+
+## Level 29
+
+There is a git repository at ssh://bandit29-git@localhost/home/bandit29-git/repo. The password for the user bandit29-git is the same as for the user bandit29.
+
+Clone the repository and find the password for the next level.
